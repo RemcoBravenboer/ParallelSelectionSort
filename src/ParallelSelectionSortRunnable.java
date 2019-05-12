@@ -6,6 +6,7 @@ public class ParallelSelectionSortRunnable implements Runnable {
 
     private int[] numbers;
     private volatile int lowest;
+    private volatile int lowestPos;
 
     public ParallelSelectionSortRunnable(int[] numbers) {
         this.numbers = numbers;
@@ -26,6 +27,10 @@ public class ParallelSelectionSortRunnable implements Runnable {
         }
     }
 
+    public int getLowestPos() {
+        return lowestPos;
+    }
+
     public int getLowest() {
         return lowest;
     }
@@ -36,6 +41,7 @@ public class ParallelSelectionSortRunnable implements Runnable {
         for (int i = 0; i < numbers.length; i++) {
             if (numbers[i] < lowest) {
                 lowest = numbers[i];
+                this.lowestPos = i;
             }
         }
         return lowest;
