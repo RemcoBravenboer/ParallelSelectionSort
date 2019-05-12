@@ -15,13 +15,6 @@ public class ParallelSelectionSortRunnable implements Runnable {
     public void run() {
         try {
             int lowest = getLowestValue(this.numbers);
-
-            System.out.println("\nThread " + Thread.currentThread().getId()
-                    + " is running with data: " + Arrays.toString(this.numbers));
-            System.out.println("The lowest number in thread "
-                    + Thread.currentThread().getId() + ": " + lowest);
-
-
         } catch (Exception e) {
             System.out.println("The following went wrong: " + e);
         }

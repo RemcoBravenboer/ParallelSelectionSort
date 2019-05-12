@@ -1,28 +1,27 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class ParallelSelectionSort {
-    private final static int CORES = 4;
-    private final static int NUMBERS = 19;
-    private static int arrayToUse[];
-    private static int splitArray[][];
+    private final static int CORES = Runtime.getRuntime().availableProcessors();
+    private final static int NUMBERS = 10000;
     private static List<Integer> lowestList = new ArrayList<>();
     private static List<Integer> lowestPos = new ArrayList<>();
     private static List<Integer> sortedList = new ArrayList<>();
 
     public static void main(String[] args) throws InterruptedException {
         int[] numbers = Numbers.generateNumber(NUMBERS);
-        numbers = Numbers.RandomizeArray(numbers);
+        System.out.println("-----------------------------------");
         System.out.println("Starting numbers: " + Arrays.toString(numbers));
 
         for (int i = 0; i < NUMBERS; i++) {
-            arrayToUse = Arrays.copyOfRange(numbers, i, numbers.length);
-            splitArray = fillSplitArray(CORES, arrayToUse);
-            lowestList.removeAll(lowestList);
-            lowestPos.removeAll(lowestPos);
-            System.out.println(Arrays.deepToString(splitArray));
+            System.out.println("------ Iteration " + i + " ------");
+            System.out.println("New numbers: " + Arrays.toString(numbers));
+            int[][] splitArray = fillSplitArray(CORES, numbers);
+            lowestList.clear();
+            lowestPos.clear();
 
             for (int j = 0; j < CORES; j++) {
                 if(splitArray[j] != null) {
@@ -35,41 +34,48 @@ public class ParallelSelectionSort {
                 }
             }
             int lowestIndex = lowestList.indexOf(Collections.min(lowestList));
-            System.out.println("Index of subarray that holds min: " + lowestIndex
-                    + " on position: " + lowestPos.get(lowestIndex));
-
-
-            System.out.println("Lowest values in iteration: " + Arrays.toString(lowestList.toArray()));
-            System.out.println("Lowest value in array: " + splitArray[lowestIndex][lowestPos.get(lowestIndex)]);
 
             splitArray = swap(splitArray, lowestIndex, lowestPos.get(lowestIndex));
+
             numbers = regenerateNumbers(splitArray);
-
-            System.out.println("---------------------------------");
-            //numbers = swapValues(numbers[0], splitArray[lowestIndex][lowestPos.get(lowestIndex)], numbers);
-
             sortedList.add(numbers[0]);
+            numbers = removeFirst(numbers);
         }
+
         System.out.println("Sorted list: " + Arrays.toString(sortedList.toArray()));
     }
 
+    private static int[] removeFirst(int[] numbers) {
+        int[] temp = new int[numbers.length - 1];
+        for (int i = 1; i < numbers.length; i++) {
+            temp[(i - 1)] = numbers[i];
+        }
+
+        return temp;
+    }
+
     private static int[] regenerateNumbers(int[][] splitArray) {
-        int[] numbers = new int[NUMBERS];
-        int x = 0;
+        List<Integer> listNumbers = new ArrayList<Integer>();
 
         for (int i = 0; i < splitArray.length; i++) {
             if(splitArray[i] != null) {
-                for (int j = 0; j < splitArray[i].length; j++) {
-                    numbers[x] = splitArray[i][j];
-                    x++;
-                }
+                    for (int j = 0; j < splitArray[i].length; j++) {
+                        listNumbers.add(splitArray[i][j]);
+                    }
+
             }
         }
-        return numbers;
+
+        int[] arr = new int[listNumbers.size()];
+        for (int i = 0; i < listNumbers.size(); i++)
+            arr[i] = listNumbers.get(i);
+
+
+        return arr;
     }
 
     private static int[][] swap(int[][] splitArray, int lowestIndex, Integer lowestPos) {
-        System.out.println("Swapping " + splitArray[0][0] + " with " + splitArray[lowestIndex][lowestPos]);
+        //System.out.println("Swapping " + splitArray[0][0] + " with " + splitArray[lowestIndex][lowestPos]);
         int tempNumber = splitArray[lowestIndex][lowestPos];
         splitArray[lowestIndex][lowestPos] = splitArray[0][0];
         splitArray[0][0] = tempNumber;
