@@ -2,11 +2,11 @@ import java.util.Arrays;
 
 public class ParallelSelectionSort {
     private final static int CORES = 2;
-    private final static int NUMBERS = 200;
+    private final static int NUMBERS = 3;
     private static int arrayToUse[];
     private static int splitArray[][];
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         int[] numbers = Numbers.generateNumber(NUMBERS);
         System.out.println("Starting numbers: " + Arrays.toString(numbers));
 
@@ -16,8 +16,13 @@ public class ParallelSelectionSort {
             System.out.println(Arrays.deepToString(splitArray));
 
             for (int j = 0; j < CORES; j++) {
-                Thread t = new Thread(new ParallelSelectionSortRunnable(splitArray[j]));
-                t.start();
+                if(splitArray[j] != null) {
+                    ParallelSelectionSortRunnable pssr = new ParallelSelectionSortRunnable(splitArray[j]);
+                    Thread t = new Thread(pssr);
+                    t.start();
+                    t.join();
+                    System.out.println("Lowest printed from main: " + pssr.getLowest());
+                }
             }
         }
     }
