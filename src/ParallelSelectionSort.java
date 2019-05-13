@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ParallelSelectionSort {
     private final static int CORES = Runtime.getRuntime().availableProcessors();
-    private final static int NUMBERS = 10000;
+    private final static int NUMBERS = 10;
     private static List<Integer> lowestList = new ArrayList<>();
     private static List<Integer> lowestPos = new ArrayList<>();
     private static List<Integer> sortedList = new ArrayList<>();

@@ -3,7 +3,7 @@ import java.util.Random;
 public class Numbers {
     private static int randomNumberGenerator() {
         Random rand = new Random();
-        return rand.nextInt(100) + 1;
+        return rand.nextInt(10000) + 1;
     }
 
     public static int[] generateNumber(int amount) {
